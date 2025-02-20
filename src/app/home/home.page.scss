@@ -4,7 +4,7 @@ ion-content {
   --padding-top: 16px;
 }
 
-ion-item {
+ion-input, ion-textarea,  ion-select {
   margin-bottom: 10px;
 }
 
@@ -39,4 +39,8 @@ ion-card {
 
 iframe {
   border: none;
+}
+
+.list-md {
+  background: none;
 }

@@ -6,36 +6,41 @@
 
 <ion-content>
   <form [formGroup]="receiptForm" *ngIf="!showPreview">
-    <ion-item>
-      <ion-label position="floating">Customer Name</ion-label>
-      <ion-input formControlName="customerName"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">Customer Address</ion-label>
-      <ion-textarea formControlName="customerAddress"></ion-textarea>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">Invoice Number</ion-label>
-      <ion-input formControlName="invoiceNumber"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">Date</ion-label>
-      <ion-input formControlName="date" type="date"></ion-input>
-    </ion-item>
+    <!-- Customer Name -->
+    <ion-input label="Customer Name" label-placement="floating" fill="outline" placeholder="Enter Customer Name"
+      formControlName="customerName"></ion-input>
+    <!-- Customer Address -->
+    <ion-textarea label="Customer Address" label-placement="floating" fill="outline"
+      placeholder="Enter Customer Address" formControlName="customerAddress"></ion-textarea>
+    <!-- invoice Number -->
+    <ion-input label="Invoice Number" label-placement="floating" fill="outline" placeholder="Enter Invoice Number"
+      formControlName="invoiceNumber"></ion-input>
+    <!-- Date -->
+    <ion-input label="Date" label-placement="floating" fill="outline" placeholder="Choose Date" id="date"
+      formControlName="date"></ion-input>
+    <ion-popover trigger="date" size="cover">
+      <ng-template>
+        <ion-datetime [showDefaultButtons]="true" presentation="date" [(ngModel)]="date" locale="sl-SI"></ion-datetime>
+      </ng-template>
+    </ion-popover>
+
 
     <ion-list formArrayName="services">
-      <ion-item *ngFor="let service of servicesFormArray.controls; let i = index" [formGroupName]="i">
-        <ion-select formControlName="serviceSelector" (ionChange)="onServiceChange(i)" placeholder="Select Service">
+      <div *ngFor="let service of servicesFormArray.controls; let i = index" [formGroupName]="i">
+        <ion-select formControlName="serviceSelector" (ionChange)="onServiceChange(i)" placeholder="Select Service"
+          label="Service" label-placement="floating" fill="outline">
           <ion-select-option *ngFor="let s of services" [value]="s.name">{{ s.name }}</ion-select-option>
           <ion-select-option value="Other">Other</ion-select-option>
         </ion-select>
         <ion-input *ngIf="service.get('serviceSelector')?.value === 'Other'" formControlName="customServiceName"
-          placeholder="Custom Service Name"></ion-input>
-        <ion-input formControlName="price" type="number" placeholder="Price"></ion-input>
+          placeholder="Custom Service Name" label="Custom Service Name" label-placement="floating"
+          fill="outline"></ion-input>
+        <ion-input formControlName="price" type="number" placeholder="Price" label="Price" label-placement="floating"
+          fill="outline"></ion-input>
         <ion-button color="danger" fill="clear" (click)="removeService(i)">
           <ion-icon name="trash"></ion-icon>
         </ion-button>
-      </ion-item>
+      </div>
     </ion-list>
 
     <ion-button expand="full" color="primary" (click)="addService()">Add Service</ion-button>

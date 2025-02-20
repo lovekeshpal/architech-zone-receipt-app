@@ -16,10 +16,12 @@ import {
   IonIcon,
   IonSelect,
   IonSelectOption,
+  IonDatetime,
+  IonPopover,
 } from '@ionic/angular/standalone';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import pdfMake from 'pdfmake/build/pdfmake'; // Default import
@@ -52,12 +54,16 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts'; // Import VFS fonts
     SafeUrlPipe,
     IonSelect,
     IonSelectOption,
+    IonDatetime,
+    IonPopover,
+    FormsModule,
   ],
 })
 export class HomePage {
   receiptForm!: FormGroup;
   showPreview = false;
   pdfDataUrl: string = '';
+  date: any;
 
   services = [
     { name: 'Plan', price: 1000 },
@@ -78,6 +84,8 @@ export class HomePage {
       date: [''],
       services: this.fb.array([this.createService()]),
     });
+
+    console.log(this.receiptForm.value);
   }
 
   createService(): FormGroup {
@@ -134,6 +142,8 @@ export class HomePage {
   }
 
   getDocDefinition(): any {
+    console.log(this.receiptForm.value);
+
     return {
       content: [
         {
