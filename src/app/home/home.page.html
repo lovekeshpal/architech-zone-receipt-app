@@ -1,20 +1,80 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>Architech Zone Receipt Generator</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <form [formGroup]="receiptForm" *ngIf="!showPreview">
+    <ion-item>
+      <ion-label position="floating">Customer Name</ion-label>
+      <ion-input formControlName="customerName"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Customer Address</ion-label>
+      <ion-textarea formControlName="customerAddress"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Invoice Number</ion-label>
+      <ion-input formControlName="invoiceNumber"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Date</ion-label>
+      <ion-input formControlName="date" type="date"></ion-input>
+    </ion-item>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+    <ion-list formArrayName="services">
+      <ion-item *ngFor="let service of servicesFormArray.controls; let i = index" [formGroupName]="i">
+        <ion-select formControlName="serviceSelector" (ionChange)="onServiceChange(i)" placeholder="Select Service">
+          <ion-select-option *ngFor="let s of services" [value]="s.name">{{ s.name }}</ion-select-option>
+          <ion-select-option value="Other">Other</ion-select-option>
+        </ion-select>
+        <ion-input *ngIf="service.get('serviceSelector')?.value === 'Other'" formControlName="customServiceName"
+          placeholder="Custom Service Name"></ion-input>
+        <ion-input formControlName="price" type="number" placeholder="Price"></ion-input>
+        <ion-button color="danger" fill="clear" (click)="removeService(i)">
+          <ion-icon name="trash"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+
+    <ion-button expand="full" color="primary" (click)="addService()">Add Service</ion-button>
+
+    <ion-item>
+      <ion-label>Total</ion-label>
+      <ion-label>{{ calculateTotal() }}</ion-label>
+    </ion-item>
+
+    <ion-row>
+      <ion-col size="6">
+        <ion-button expand="full" color="medium" (click)="previewPDF()">Preview PDF</ion-button>
+      </ion-col>
+      <ion-col size="6">
+        <ion-button expand="full" color="success" (click)="generatePDF()">Generate PDF</ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+
+  <ion-card *ngIf="showPreview">
+    <ion-card-header>
+      <ion-card-title>PDF Preview</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <iframe [src]="pdfDataUrl | safeUrl" width="100%" height="400px"></iframe>
+      <ion-row>
+        <ion-col size="4">
+          <ion-button expand="full" color="danger" (click)="closePreview()">Close</ion-button>
+        </ion-col>
+        <ion-col size="4">
+          <ion-button expand="full" color="success" (click)="generatePDF()">Download</ion-button>
+        </ion-col>
+        <ion-col size="4">
+          <ion-button expand="full" color="primary" (click)="shareWhatsApp()">
+            <ion-icon name="logo-whatsapp" slot="start"></ion-icon>
+            Share
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
