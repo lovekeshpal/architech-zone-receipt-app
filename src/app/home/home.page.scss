@@ -33,14 +33,31 @@ ion-textarea {
   }
 }
 
-ion-card {
-  margin: 10px;
-}
-
 iframe {
   border: none;
 }
 
 .list-md {
   background: none;
+}
+
+fieldset{
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.button{
+  height: 80%;
+  color: #fff;
+  margin: auto;
+  margin-left: 5px;
+
+}
+
+.add-service{
+  margin-top: 10px;
+}
+
+.total {
+  margin: 10px 0 0 0;
 }

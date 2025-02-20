@@ -11,7 +11,7 @@
       formControlName="customerName"></ion-input>
     <!-- Customer Address -->
     <ion-textarea label="Customer Address" label-placement="floating" fill="outline"
-      placeholder="Enter Customer Address" formControlName="customerAddress"></ion-textarea>
+      placeholder="Enter Customer Address" formControlName="customerAddress" auto-grow="true"></ion-textarea>
     <!-- invoice Number -->
     <ion-input label="Invoice Number" label-placement="floating" fill="outline" placeholder="Enter Invoice Number"
       formControlName="invoiceNumber"></ion-input>
@@ -24,31 +24,43 @@
       </ng-template>
     </ion-popover>
 
+    <fieldset>
+      <legend>Add Services</legend>
+      <ion-list formArrayName="services">
+        <div *ngFor="let service of servicesFormArray.controls; let i = index" [formGroupName]="i">
 
-    <ion-list formArrayName="services">
-      <div *ngFor="let service of servicesFormArray.controls; let i = index" [formGroupName]="i">
-        <ion-select formControlName="serviceSelector" (ionChange)="onServiceChange(i)" placeholder="Select Service"
-          label="Service" label-placement="floating" fill="outline">
-          <ion-select-option *ngFor="let s of services" [value]="s.name">{{ s.name }}</ion-select-option>
-          <ion-select-option value="Other">Other</ion-select-option>
-        </ion-select>
-        <ion-input *ngIf="service.get('serviceSelector')?.value === 'Other'" formControlName="customServiceName"
-          placeholder="Custom Service Name" label="Custom Service Name" label-placement="floating"
-          fill="outline"></ion-input>
-        <ion-input formControlName="price" type="number" placeholder="Price" label="Price" label-placement="floating"
-          fill="outline"></ion-input>
-        <ion-button color="danger" fill="clear" (click)="removeService(i)">
-          <ion-icon name="trash"></ion-icon>
-        </ion-button>
-      </div>
-    </ion-list>
+          <ion-row>
+            <ion-col size="6">
+              <ion-select formControlName="serviceSelector" (ionChange)="onServiceChange(i)"
+                placeholder="Select Service" label="Service" label-placement="floating" fill="outline">
+                <ion-select-option *ngFor="let s of services" [value]="s.name">{{ s.name }}</ion-select-option>
+                <ion-select-option value="Other">Other</ion-select-option>
+              </ion-select></ion-col>
+            <ion-col size="6">
+              <ion-input *ngIf="service.get('serviceSelector')?.value === 'Other'" formControlName="customServiceName"
+                placeholder="Custom Service Name" label="Custom Service Name" label-placement="floating"
+                fill="outline"></ion-input>
+            </ion-col>
 
-    <ion-button expand="full" color="primary" (click)="addService()">Add Service</ion-button>
+            <ion-col size="6">
+              <ion-input formControlName="price" type="number" placeholder="Price" label="Price"
+                label-placement="floating" fill="outline"></ion-input>
+            </ion-col>
+            <ion-col size="2">
+              <ion-button class="button" (click)="removeService(i)">
+                <ion-icon slot="start" name="trash"></ion-icon>
+                Delete
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-list>
+    </fieldset>
 
-    <ion-item>
-      <ion-label>Total</ion-label>
-      <ion-label>{{ calculateTotal() }}</ion-label>
-    </ion-item>
+    <ion-button expand="full" class="button add-service" (click)="addService()">Add Service</ion-button>
+    <ion-input class="total" [readonly]="true" label="Total" [value]="total" label-placement="floating"
+      fill="outline"></ion-input>
+
 
     <ion-row>
       <ion-col size="6">

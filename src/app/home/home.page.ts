@@ -4,7 +4,6 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonItem,
   IonLabel,
   IonButton,
   IonCard,
@@ -18,11 +17,18 @@ import {
   IonSelectOption,
   IonDatetime,
   IonPopover,
+  IonInput,
+  IonItem,
+  IonList,
+  IonTextarea,
 } from '@ionic/angular/standalone';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
+import { addIcons } from 'ionicons';
+import { trash } from 'ionicons/icons';
 
 import pdfMake from 'pdfmake/build/pdfmake'; // Default import
 import * as pdfFonts from 'pdfmake/build/vfs_fonts'; // Import VFS fonts
@@ -41,8 +47,6 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts'; // Import VFS fonts
     IonTitle,
     IonContent,
     ReactiveFormsModule,
-    IonItem,
-    IonLabel,
     IonButton,
     IonCard,
     IonCardContent,
@@ -57,6 +61,10 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts'; // Import VFS fonts
     IonDatetime,
     IonPopover,
     FormsModule,
+    IonInput,
+    IonItem,
+    IonList,
+    IonTextarea,
   ],
 })
 export class HomePage {
@@ -64,6 +72,7 @@ export class HomePage {
   showPreview = false;
   pdfDataUrl: string = '';
   date: any;
+  total: number = 0;
 
   services = [
     { name: 'Plan', price: 1000 },
@@ -74,7 +83,9 @@ export class HomePage {
     { name: 'Estimate', price: 500 },
   ];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) {
+    addIcons({ trash });
+  }
 
   ngOnInit() {
     this.receiptForm = this.fb.group({
@@ -85,7 +96,16 @@ export class HomePage {
       services: this.fb.array([this.createService()]),
     });
 
+    this.updateTotal();
+    this.servicesFormArray.valueChanges.subscribe(() => {
+      this.updateTotal();
+    });
+
     console.log(this.receiptForm.value);
+  }
+
+  updateTotal() {
+    this.total = this.calculateTotal();
   }
 
   createService(): FormGroup {
@@ -151,8 +171,7 @@ export class HomePage {
             { image: 'logo', width: 100 },
             {
               text: [
-                'ArchiTECH Zone\n',
-                'Architech zone,\n',
+                'ArchiTECH Zone,\n',
                 'First floor, opposite roadways bus stand,\n',
                 'tirwaganj, Kannauj\n',
                 'Kannauj, Uttar pradesh - 209732 IN\n',
@@ -164,7 +183,19 @@ export class HomePage {
             },
           ],
         },
-        { text: 'BILL TO', style: 'subheader' },
+
+        {
+          columns: [
+            { text: 'BILL TO', style: 'subheader' },
+            {
+              text: `Invoice No: ${
+                this.receiptForm.get('invoiceNumber')?.value || ''
+              }`,
+              style: 'subheader',
+              alignment: 'right',
+            },
+          ],
+        },
         {
           text: `${this.receiptForm.get('customerName')?.value || ''}\n${
             this.receiptForm.get('customerAddress')?.value || ''
@@ -172,11 +203,6 @@ export class HomePage {
         },
         {
           columns: [
-            {
-              text: `Invoice No: ${
-                this.receiptForm.get('invoiceNumber')?.value || ''
-              }`,
-            },
             {
               text: `Date: ${this.receiptForm.get('date')?.value || ''}`,
               alignment: 'right',
@@ -197,14 +223,35 @@ export class HomePage {
           },
         },
         { text: `Total: ${this.calculateTotal()}`, style: 'total' },
+
+        { text: `Terms and Conditions:`, style: 'subheader' },
+
         {
-          text: 'Note:',
+          text: `1. The map will not be shared via WhatsApp, print, or email before full payment is made.
+          2. No changes will be accepted once the map is finalized.
+          3. Maps are of various types, so the fees for each may differ.
+          4. Site visit charges are separate.
+          5. Visit the office to discuss the map.
+          6. Call before coming to meet.
+          `,
+          // text: `Note:
+          // 1. फुल पेमेंट होने से पहले व्हाट्सएप, प्रिंट या ईमेल नहीं किया जाएगा।
+          // 2. नक्शा फाइनल (अंतिम रूप) होने के बाद कोई बदलाव स्वीकार नहीं होगा।
+          // 3. नक्शे कई प्रकार के होते हैं, इसलिए सभी की फीस भी अलग-अलग होती है।
+          // 4. साइट विजिट की फीस अलग से होती है।
+          // 5. नक्शे पर चर्चा करने के लिए ऑफिस में आएं।
+          // 6. मिलने से पहले फोन करके आएं।
+          // `,
           style: 'note',
         },
       ],
       footer: {
-        text: 'By signing this document, the customer agrees to the services and conditions described in this document. architechzone.com',
-        alignment: 'center',
+        text: 'By signing this document, the customer agrees to the services and conditions described in this document. | archiTECHzone.com',
+
+        alignment: 'left',
+        margin: 20,
+        fontSize: 8,
+        link: 'https//architechzone.com',
       },
       styles: {
         subheader: { fontSize: 14, bold: true, margin: [0, 10, 0, 5] },
